@@ -15,7 +15,9 @@
    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 use colored::Colorize;
-use cumulus::{logger, set_virtual_terminal, util};
+use cumulus::{logger, util};
+// todo: find out how to check for windows early in the compilation since colored::control
+// apparently doesn't exist on non-windows platforms
 use rlua::{Function, Lua, Result, Table, UserDataMethods, Variadic};
 use std::collections::HashMap;
 use std::io::{Read, Write};
@@ -26,9 +28,10 @@ const LUA_AUTHORS: &str = "R. Ierusalimschy, L. H. de Figueiredo, W. Celes";
 
 fn main() -> Result<()> {
     logger::open_log_file_for_saving(None).unwrap();
-    set_virtual_terminal!(true);
 
     util::attach_interrupt_handler(Some(|| {}));
+
+    colored::control::set_virtual_terminal(true).unwrap();
 
     let args = std::env::args().collect::<Vec<String>>();
     let args_length = args.len();
@@ -37,6 +40,7 @@ fn main() -> Result<()> {
     load_lua_log_library(&lua)?;
     load_color_library(&lua)?;
     load_http_library(&lua)?;
+    load_memory_library(&lua)?;
     // if 1st argument is a lua file, run it
     if args_length > 1 {
         let file_path = &args[1];
