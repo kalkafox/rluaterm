@@ -15,7 +15,7 @@
    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 use colored::Colorize;
-use cumulus::{logger, util};
+use cumulus::{logger, set_virtual_terminal, util};
 use rlua::{Function, Lua, Result, Table, UserDataMethods, Variadic};
 use std::collections::HashMap;
 use std::io::{Read, Write};
@@ -26,7 +26,7 @@ const LUA_AUTHORS: &str = "R. Ierusalimschy, L. H. de Figueiredo, W. Celes";
 
 fn main() -> Result<()> {
     logger::open_log_file_for_saving(None).unwrap();
-    logger::set_virtual_terminal(true);
+    set_virtual_terminal!(true);
 
     util::attach_interrupt_handler(Some(|| {}));
 
